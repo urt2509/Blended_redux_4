@@ -1,5 +1,5 @@
 import { nanoid } from 'nanoid';
-import { useState, useEffect } from 'react';
+import { useEffect } from 'react';
 
 import {
   Container,
@@ -11,31 +11,37 @@ import {
   Text,
   Todo,
 } from 'components';
+import { useDispatch, useSelector } from 'react-redux';
+import { addTodo, deleteTodo, getTodos } from 'redux/todosSlicer';
 
 export const App = () => {
-  const [todos, setTodos] = useState(() => {
-    return JSON.parse(localStorage.getItem('todos')) ?? [];
-  });
+  const dispatch = useDispatch();
+  const todos = useSelector(getTodos);
+  // console.log(todos);
+  // const [todos, setTodos] = useState(() => {
+  //   return JSON.parse(localStorage.getItem('todos')) ?? [];
+  // });
 
   useEffect(() => {
     localStorage.setItem('todos', JSON.stringify(todos));
   }, [todos]);
 
-  const addTodo = text => {
+  const addTodos = text => {
     const todo = {
       id: nanoid(),
       text,
     };
-
-    setTodos(todos => [...todos, todo]);
+    dispatch(addTodo(todo));
+    // setTodos(todos => [...todos, todo]);
   };
 
   const handleSubmit = data => {
-    addTodo(data);
+    addTodos(data);
   };
 
-  const deleteTodo = id => {
-    setTodos(prevState => prevState.filter(todo => todo.id !== id));
+  const deleteTodos = id => {
+    dispatch(deleteTodo(id));
+    // setTodos(prevState => prevState.filter(todo => todo.id !== id));
   };
 
   return (
@@ -57,7 +63,7 @@ export const App = () => {
                     id={todo.id}
                     text={todo.text}
                     counter={index + 1}
-                    onClick={deleteTodo}
+                    onClick={deleteTodos}
                   />
                 </GridItem>
               ))}
